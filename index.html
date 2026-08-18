@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nutriva</title>
+<meta name="description" content="Photograph your meal, see the calories. Nutriva keeps a week you can actually look back on." />
+
+<!-- Link previews. Whoever taps a shared weekly recap sees this card first in
+     WhatsApp / Messages / Telegram before the page even loads. -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Nutriva" />
+<meta property="og:description" content="Photograph your meal, see the calories." />
+<meta property="og:url" content="https://ilkercelebi.github.io/nutrition-web/" />
+<meta name="twitter:card" content="summary" />
+
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 3.5rem 1.25rem 3rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; color: #2b2320; background: #fdf6f0;
+    max-width: 420px; margin-inline: auto;
+    text-align: center;
+    /* The buttons must clear the home indicator on iOS Safari. */
+    padding-bottom: max(3rem, env(safe-area-inset-bottom));
+  }
+  .mascot { display: block; margin: 0 auto 1.25rem; }
+  h1 { font-size: 2.1rem; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  .tagline { color: #6b5c54; margin: 0 0 2.25rem; font-size: 1.05rem; }
+  .from-friend {
+    background: #fbe9df; border: 1px solid #f3c9b4; border-radius: 14px;
+    padding: .8rem 1rem; font-size: .95rem; color: #6b4a38;
+    margin: 0 0 1.75rem;
+  }
+  .btn {
+    display: block; width: 100%; padding: 1rem 1.25rem; margin-bottom: .6rem;
+    border-radius: 14px; border: 1px solid transparent;
+    font-size: 1.02rem; font-weight: 600; text-decoration: none;
+    /* 48dp minimum, same as in the app. */
+    min-height: 52px;
+  }
+  .btn-primary { background: #1c1614; color: #fdf6f0; }
+  .btn-secondary { background: transparent; color: #2b2320; border-color: #e3cdbf; }
+  .soon {
+    border: 1px dashed #e3cdbf; border-radius: 14px; padding: 1rem;
+    color: #8a7f78; font-size: .95rem; margin-bottom: .6rem;
+  }
+  footer {
+    margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid #ecd9cc;
+    color: #8a7f78; font-size: .85rem;
+  }
+  footer a { color: #8a7f78; }
+  @media (prefers-color-scheme: dark) {
+    body { color: #ece4de; background: #191412; }
+    .tagline { color: #b8a79d; }
+    .from-friend { background: #2a1d16; border-color: #4a3324; color: #e6cbb8; }
+    .btn-primary { background: #f8ede5; color: #1c1614; }
+    .btn-secondary { color: #ece4de; border-color: #4a3a30; }
+    .soon { border-color: #4a3a30; color: #9a8d84; }
+    footer { border-color: #33291f; color: #9a8d84; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- The mandarin, matching WarmMascot inside the app. Inline so the page is a
+       single request and renders instantly on a phone connection. -->
+  <svg class="mascot" width="88" height="88" viewBox="0 0 88 88" aria-hidden="true">
+    <path d="M46 16c2-6 8-9 13-9-1 6-5 10-11 11z" fill="#7cb342"/>
+    <circle cx="44" cy="52" r="30" fill="#f4763a"/>
+    <circle cx="44" cy="52" r="30" fill="url(#g)"/>
+    <defs>
+      <radialGradient id="g" cx="35%" cy="30%" r="75%">
+        <stop offset="0" stop-color="#ff9d5c"/>
+        <stop offset="1" stop-color="#f4763a" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="34" cy="48" r="3.2" fill="#3a2318"/>
+    <circle cx="54" cy="48" r="3.2" fill="#3a2318"/>
+    <ellipse cx="27" cy="57" rx="4.5" ry="3" fill="#ef5f3c" opacity=".45"/>
+    <ellipse cx="61" cy="57" rx="4.5" ry="3" fill="#ef5f3c" opacity=".45"/>
+    <path d="M37 58q7 6 14 0" stroke="#3a2318" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <h1>Nutriva</h1>
+  <p class="tagline" id="tagline">Photograph your meal, see the calories.</p>
+
+  <div class="from-friend" id="context">
+    Someone shared their week with you. Nutriva tracks meals from a photo — no
+    weighing, no typing out ingredients.
+  </div>
+
+  <div id="stores"></div>
+
+  <footer>
+    <a href="privacy/">Privacy</a> · <a href="terms/">Terms</a> · <a href="support/">Support</a>
+  </footer>
+
+<script>
+  // Filled in once App Store Connect assigns the numeric app ID. Until then the
+  // page says "coming soon" on iOS rather than sending people to an Apple 404 —
+  // a dead store link on the one landing page the app has is worse than an
+  // honest "not yet".
+  var IOS_APP_ID = '';
+  var ANDROID_PACKAGE = 'com.ilkerai.nutriva';
+
+  var COPY = {
+    en: {
+      tagline: 'Photograph your meal, see the calories.',
+      context: 'Someone shared their week with you. Nutriva tracks meals from a photo — no weighing, no typing out ingredients.',
+      ios: 'Download on the App Store',
+      android: 'Get it on Google Play',
+      iosSoon: 'Coming to the App Store shortly.',
+      privacy: 'Privacy', terms: 'Terms', support: 'Support'
+    },
+    tr: {
+      tagline: 'Yemeğini çek, kalorisini gör.',
+      context: 'Biri haftasını seninle paylaştı. Nutriva yemeğini fotoğraftan tanıyor — tartı yok, malzeme yazma yok.',
+      ios: 'App Store’dan indir',
+      android: 'Google Play’den indir',
+      iosSoon: 'App Store’da çok yakında.',
+      privacy: 'Gizlilik', terms: 'Şartlar', support: 'Destek'
+    }
+  };
+
+  var ua = navigator.userAgent || '';
+  // iPadOS 13+ reports itself as a Mac; the touch-point count is what separates
+  // an iPad from a desktop Safari.
+  var isIOS = /iPhone|iPad|iPod/.test(ua) ||
+              (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/.test(ua);
+
+  var lang = (navigator.language || 'en').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'en';
+  var t = COPY[lang];
+
+  document.documentElement.lang = lang;
+  document.getElementById('tagline').textContent = t.tagline;
+  document.getElementById('context').textContent = t.context;
+
+  var links = document.querySelectorAll('footer a');
+  links[0].textContent = t.privacy;
+  links[1].textContent = t.terms;
+  links[2].textContent = t.support;
+
+  var iosHref = IOS_APP_ID ? 'https://apps.apple.com/app/id' + IOS_APP_ID : '';
+  var androidHref = 'https://play.google.com/store/apps/details?id=' + ANDROID_PACKAGE;
+
+  function button(href, label, primary) {
+    if (!href) {
+      return '<div class="soon">' + t.iosSoon + '</div>';
+    }
+    return '<a class="btn ' + (primary ? 'btn-primary' : 'btn-secondary') +
+           '" href="' + href + '">' + label + '</a>';
+  }
+
+  // The visitor's own platform first; the other stays available because people
+  // forward these links across phones.
+  var order = isAndroid
+    ? [[androidHref, t.android], [iosHref, t.ios]]
+    : [[iosHref, t.ios], [androidHref, t.android]];
+
+  // Whichever link actually works gets the filled treatment. Without this, a
+  // visitor on iOS before the App Store listing exists sees the only tappable
+  // thing on the page styled as the afterthought.
+  var primaryIndex = order[0][0] ? 0 : 1;
+
+  document.getElementById('stores').innerHTML = order
+    .map(function (entry, i) { return button(entry[0], entry[1], i === primaryIndex); })
+    .join('');
+</script>
+
+</body>
+</html>
